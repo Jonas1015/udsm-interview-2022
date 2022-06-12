@@ -63,8 +63,8 @@ export function getProcessedData(
     }
   })
 
-  let valueRegistered: number
-  let valueActive: number
+  let valueRegistered: number = 0
+  let valueActive: number = 0
   dataRegistered.forEach((element: any) => {
     valueRegistered += element.value
   })
