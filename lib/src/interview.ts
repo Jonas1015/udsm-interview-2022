@@ -1,91 +1,51 @@
-type data = {
-  value: number
-  name: string
-  code: string
-}
+import { yearData, data } from './types'
 
-let dataArray: data[]
+export function getProcessedData( yearOneData: yearData[], yearTwoData: yearData[],yearThreeData: yearData[]): data[] {
 
-export function getProcessedData(
-  yearOneData: any,
-  yearTwoData: any,
-  yearThreeData: any
-): data[] {
-  // TODO:
-  // 1. Remove data items that has reporting rate less than 50
-  // 2. Combine relevant data (data of the same code) from each year inorder to compute average
-  // 3. Compute average for the combined data to arrive to single value (average value)
-  // 4. Return the averaged data as final output
-  /***
-   * [
-      {
-        value: 43,
-        name: 'Number of members registered',
-        code: 'MEMBER_REGISTERED',
-      },
-      {
-        value: 17,
-        name: 'Number of active members',
-        code: 'ACTIVE_MEMBERS',
-      },
-    ]
-   */
-  let dataRegistered: any[]
-  let dataActive: any[]
-  yearOneData.forEach((element: any) => {
-    if(Number(element.reportingRate) >= 50 && element.code == 'MEMBER_REGISTERED' ){
-      dataRegistered.push(element)
-    }
-  })
-  yearTwoData.forEach((element: any) => {
-    if(Number(element.reportingRate) >= 50 && element.code == 'MEMBER_REGISTERED' ){
-      dataRegistered.push(element)
-    }
-  })
-  yearThreeData.forEach((element: any) => {
-    if(Number(element.reportingRate) >= 50 && element.code == 'MEMBER_REGISTERED' ){
-      dataRegistered.push(element)
-    }
-  })
-  yearOneData.forEach((element: any) => {
-    if(Number(element.reportingRate) >= 50 && element.code == 'ACTIVE_MEMBERS' ){
-      dataActive.push(element)
-    }
-  })
-  yearTwoData.forEach((element: any) => {
-    if(Number(element.reportingRate) >= 50 && element.code == 'ACTIVE_MEMBERS' ){
-      dataActive.push(element)
-    }
-  })
-  yearThreeData.forEach((element: any) => {
-    if(Number(element.reportingRate) >= 50 && element.code == 'ACTIVE_MEMBERS' ){
-      dataActive.push(element)
-    }
-  })
+  /* holds all registered members for all years */
+  const registeredData: yearData[] = []
 
-  let valueRegistered: number = 0
-  let valueActive: number = 0
-  dataRegistered.forEach((element: any) => {
-    valueRegistered += element.value
-  })
-  dataActive.forEach((element: any) => {
-    valueActive += element.value
-  })
+  /* holds all active members for all years */
+  const activeData: yearData[] = [] 
 
-  let avgRegistered: number = valueRegistered/dataRegistered.length
-  let avgActive: number = valueActive/dataActive.length
+  /* holds our final result */
+  const combinedYearData: data [] = []
 
-  dataArray.push({
-    value: avgRegistered,
+  // put all data into one array
+  const years: any[] = [yearOneData, yearTwoData, yearThreeData]
+
+  // Loop over each element in year array
+  for (let year of years) {
+    for (let yearData of year) {
+      /* check for registered data */
+      if ((Number(yearData.reportingRate) >= 50) && (yearData.code === 'MEMBER_REGISTERED')) {
+        registeredData.push(yearData)
+      }
+
+      /* check for active data */
+      if ((Number(yearData.reportingRate) >= 50) && (yearData.code === 'ACTIVE_MEMBERS')) {
+        activeData.push(yearData)
+      }
+    }
+  }
+
+  // Find average of all arrays with data we need
+  let averageRegisteredData = (registeredData.map((data: yearData) => data.value).reduce((a: number, b: number) => a + b, 0)) / registeredData.length
+
+  let averageActiveData = (activeData.map((data: yearData) => data.value).reduce((a: number, b: number) => a + b, 0)) / registeredData.length
+
+  /* update combined data */
+  combinedYearData.push({
+    value: averageRegisteredData,
     name: 'Number of members registered',
-    code: 'MEMBER_REGISTERED',
+    code: 'MEMBER_REGISTERED'
   })
-  dataArray.push({
-    value: avgActive,
+
+  combinedYearData.push({
+    value: averageActiveData,
     name: 'Number of active members',
-    code: 'ACTIVE_MEMBERS',
+      code: 'ACTIVE_MEMBERS'
   })
 
-
-  return dataArray;
+  return combinedYearData
 }
